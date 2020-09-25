@@ -1,6 +1,6 @@
 //Name:             Ahmed Butt, Muzhda Ehsan
 //Student ID:       100770449, 100770164
-//Last Modified:    September 24, 2020
+//Last Modified:    September 25, 2020
 //File:             OOP3200-Lab2.cpp
 
 #include <iostream>
@@ -95,7 +95,7 @@ int main()
             cout << "\nEnter a work ticket number: ";
             getline(cin, tempWorkTicketNumber);
             tempWorkTicketNumber = CheckIfEmpty(tempWorkTicketNumber);
-            while (!regex_search(tempWorkTicketNumber, regex("^[0-9]*$")) || stoi(tempWorkTicketNumber) < min) // if input not a whole number
+            while (!regex_search(tempWorkTicketNumber, regex("^[0-9]*$")) || stoll(tempWorkTicketNumber) < min) // if input not a whole number
             {
                 cout << "* Invalid input. Please try again and enter a whole number greater than 0.\n";
                 cout << "\nEnter a work ticket number: ";
@@ -140,7 +140,7 @@ int main()
             cout << "\n\n";
 
             //SetWorkTicket call for specific client, provided all validated variables
-            client[ticketIncrement].SetWorkTicket(stoi(tempWorkTicketNumber), tempClientID, stoi(tempDay), stoi(tempMonth), stoi(tempYear), tempIssueDiscription);
+            client[ticketIncrement].SetWorkTicket(stoll(tempWorkTicketNumber), tempClientID, stoll(tempDay), stoll(tempMonth), stoll(tempYear), tempIssueDiscription);
 
             ticketIncrement++; //increment the ticket
 
@@ -169,11 +169,11 @@ int main()
         cin >> anotherWorkTicket;   //>> operator gets called here
 
         cout << "\nOverload '<<' Operator" << "\n---------------------\n";
-        cout << anotherWorkTicket << "\n\n";
+        cout << anotherWorkTicket << "\n\n"; //<< operator gets called here
     }
     catch (exception& ia)
     {
-        cerr << "* Invalid input." << ia.what();
+        cerr << "* Invalid input. " << ia.what() << ".\n\n";
     }
     return 0;
 }
@@ -188,7 +188,7 @@ WorkTicket::WorkTicket(WorkTicket& new_ticket)   //copy constructor
     cout << "First WorkTicket object was COPIED.\n";
 }
 
-WorkTicket::operator string()   //conversion operator (hope this is correct...)
+WorkTicket::operator string()   //conversion operator
 {
     stringstream reformatedTicket;
     reformatedTicket << "Work Ticket # " << GetWorkTicketNumber() << " - " << GetClientID() << " (" << GetDay() <<
@@ -196,14 +196,14 @@ WorkTicket::operator string()   //conversion operator (hope this is correct...)
     return reformatedTicket.str();
 }
 
-bool WorkTicket::operator==(WorkTicket& other_ticket)   //Assignment operator
+bool WorkTicket::operator==(WorkTicket& other_ticket)   //equality operator
 {
     return ((GetWorkTicketNumber() == other_ticket.GetWorkTicketNumber()) && (GetClientID() == other_ticket.GetClientID())
         && (GetDay() == other_ticket.GetDay()) && (GetMonth() == other_ticket.GetMonth()) && (GetYear() == other_ticket.GetYear())
         && (GetIssueDiscription() == other_ticket.GetIssueDiscription()));
 }
 
-WorkTicket WorkTicket::operator=(WorkTicket& new_ticket)
+WorkTicket WorkTicket::operator=(WorkTicket& new_ticket)    //assignment operator
 {
     SetWorkTicketNumber(new_ticket.GetWorkTicketNumber());
     SetClientID(new_ticket.GetClientID());
@@ -213,7 +213,7 @@ WorkTicket WorkTicket::operator=(WorkTicket& new_ticket)
     return *this;
 }
 
-istream& operator>>(istream& in, WorkTicket& ticket)
+istream& operator>>(istream& in, WorkTicket& ticket)    //overload >> operator
 {
     string number = to_string(ticket.workTicketNumber);
     string day = to_string(ticket.dDay);
@@ -232,15 +232,15 @@ istream& operator>>(istream& in, WorkTicket& ticket)
     //Used DateValidation() that was specifically meant for lab 1, but could work here if I messed with the code a bit...
     cout << "Enter a day: ";
     getline(in, day);
-    ticket.dDay = stoi(DateValidation(day, min, maxDay, "day"));
+    ticket.dDay = stoll(DateValidation(day, min, maxDay, "day"));
 
     cout << "Enter a month: ";
     getline(in, month);
-    ticket.dMonth = stoi(DateValidation(month, min, maxMonth, "month"));
+    ticket.dMonth = stoll(DateValidation(month, min, maxMonth, "month"));
 
     cout << "Enter a year: ";
     getline(in, year);
-    ticket.dYear = stoi(DateValidation(year, minYear, maxYear, "year"));
+    ticket.dYear = stoll(DateValidation(year, minYear, maxYear, "year"));
 
     cout << "Enter an issue discritption: ";
     getline(in, ticket.issueDiscription);
@@ -250,11 +250,10 @@ istream& operator>>(istream& in, WorkTicket& ticket)
         cout << "\nEnter an issue discription: ";
         getline(in, ticket.issueDiscription);
     }
-
     return in;
 }
 
-ostream& operator<<(ostream& out, WorkTicket& ticket)
+ostream& operator<<(ostream& out, WorkTicket& ticket)   //overload << operator
 {
     out << "Work Ticket Number: " << ticket.workTicketNumber << "\n"
     << "Client ID: " << ticket.clientID << "\n"
@@ -266,7 +265,7 @@ ostream& operator<<(ostream& out, WorkTicket& ticket)
 //Functions
 string CheckIfEmpty(string text)
 {
-    if (text.empty()) //for stoi() purposes, it doesn't like blank strings
+    if (text.empty()) //for stoll() purposes, it doesn't like blank strings
     {
         text = "0";
     }
@@ -275,7 +274,7 @@ string CheckIfEmpty(string text)
 
 string DateValidation(string dayMonthYear, const int min, const int max, string dMY)
 {
-    while (!regex_search(dayMonthYear, regex("^[0-9]*$")) || stoi(dayMonthYear) < min || stoi(dayMonthYear) > max) //if not whole number within range
+    while (!regex_search(dayMonthYear, regex("^[0-9]*$")) || stoll(dayMonthYear) < min || stoll(dayMonthYear) > max) //if not whole number within range
     {
         cout << "* Invalid input. Please try again and enter a whole number between " << min << " and " << max << ".\n";
         cout << "\nEnter " << dMY << ": ";
@@ -287,14 +286,14 @@ string DateValidation(string dayMonthYear, const int min, const int max, string 
 int TicketNumValidation(string number)  //to help validate for >> operator, could also be used in main()
 {   
     number = CheckIfEmpty(number);
-    while (!regex_search(number, regex("^[0-9]*$")) || stoi(number) < 1) // if input not a whole number
+    while (!regex_search(number, regex("^[0-9]*$")) || stoll(number) < 1) // if input not a whole number
     {
         cout << "* Invalid input. Please try again and enter a whole number greater than 0.\n";
         cout << "\nEnter a work ticket number: ";
         getline(cin, number);
         number = CheckIfEmpty(number);
     }
-    return stoi(number);
+    return stoll(number);
 }
 string TicketIdValidation(string id)    //to help validate for >> operator, could also be used in main()
 {
