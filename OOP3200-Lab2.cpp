@@ -155,7 +155,7 @@ int main()
         WorkTicket newWorkTicket = client[0];   //copy constructor gets called here
 
         cout << "\nConversion Operator" << "\n---------------------\n";
-        cout << newWorkTicket.operator string() << "\n";    //conversion operator gets called here
+        newWorkTicket.operator string();    //conversion operator gets called here
 
         cout << "\nEquality Operator" << "\n---------------------\n";
         cout << "Comparing WorkTickets 1 and 2 (0 = inequal, 1 = equal): " << (client[0] == client[1]) << "\n";   //equality operator called here
